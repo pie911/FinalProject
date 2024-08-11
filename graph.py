@@ -1,92 +1,75 @@
-import matplotlib.pyplot as plt
 import numpy as np
-import tkinter as tk
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import json
+import pandas as pd
+import os
+from datetime import datetime
+import matplotlib.pyplot as plt
 
 # Load data from JSON file
-with open('F:/FinalProject/data.json', 'r') as f:
+json_file_path = 'F:/FinalProject/data.json'
+with open(json_file_path, 'r') as f:
     data = json.load(f)
 
-# Extract data
-mass = np.array(data["mass"])
-speed = np.array(data["speed"])
-height = np.array(data["height"])
-wire_length = np.array(data["wire_length"])
-wire_diameter = np.array(data["wire_diameter"])
-motor_power = np.array(data["motor_power"])
-operational_time = np.array(data["operational_time"])
-maintenance_cost = np.array(data["maintenance_cost"])
-training_cost = np.array(data["training_cost"])
-material_strength = np.array(data["material_strength"])
-budget = np.array(data["budget"])
-location = np.array(data["location"])
-reactant1 = np.array(data["reactant1"])
-reactant2 = np.array(data["reactant2"])
-sample_type = np.array(data["sample_type"])
-wind_speed = np.array(data["wind_speed"])
-area = np.array(data["area"])
-iron_temp = np.array(data["iron_temp"])
-motor_temp = np.array(data["motor_temp"])
+# Convert data to DataFrame
+df = pd.DataFrame(data)
 
-# Calculate derived data
-weight = mass * 9.8
-centripetal_force = (mass * speed**2) / np.random.uniform(0.1, 10, 10)
-fall_time = np.sqrt((2 * height) / 9.8)
-horizontal_distance = speed * fall_time
-total_cost = mass * 100 + np.random.uniform(1000, 10000, 10)
-kinetic_energy = 0.5 * mass * speed**2
+# Create a new folder 'docs' if it doesn't exist
+docs_folder = 'F:/FinalProject/docs'
+if not os.path.exists(docs_folder):
+    os.makedirs(docs_folder)
 
-# List of plots
-plots = [
-    ("Weight vs. Mass", mass, weight, "Mass (kg)", "Weight (N)"),
-    ("Centripetal Force vs. Speed", speed, centripetal_force, "Speed (m/s)", "Centripetal Force (N)"),
-    ("Fall Time vs. Height", height, fall_time, "Height (m)", "Fall Time (s)"),
-    ("Horizontal Distance vs. Speed", speed, horizontal_distance, "Speed (m/s)", "Horizontal Distance (m)"),
-    ("Total Cost vs. Mass", mass, total_cost, "Mass (kg)", "Total Cost (INR)"),
-    ("Kinetic Energy vs. Speed", speed, kinetic_energy, "Speed (m/s)", "Kinetic Energy (J)")
-]
+# Create a new folder for the current run
+timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
+run_folder = os.path.join(docs_folder, f'graphs_{timestamp}')
+os.makedirs(run_folder)
 
-# Initialize plot index
-plot_index = 0
+# Function to save and show plots
+def save_and_show_plot(fig, plot_name):
+    image_file_path = os.path.join(run_folder, f'{plot_name}.png')
+    fig.savefig(image_file_path, bbox_inches='tight')
+    plt.show()
+    plt.close(fig)
+    print(f"{plot_name} saved and displayed successfully.")
 
-# Function to update the plot
-def update_plot():
-    global plot_index
-    title, x, y, xlabel, ylabel = plots[plot_index]
-    ax.clear()
-    ax.plot(x, y, 'o-')
-    ax.set_title(title)
-    ax.set_xlabel(xlabel)
-    ax.set_ylabel(ylabel)
-    canvas.draw()
-
-# Function to handle key press events
-def on_key(event):
-    global plot_index
-    if event.keysym == 'Right':
-        plot_index = (plot_index + 1) % len(plots)
-    elif event.keysym == 'Left':
-        plot_index = (plot_index - 1) % len(plots)
-    update_plot()
-
-# Create the main window
-root = tk.Tk()
-root.title("Experiment Analysis Graphs")
-
-# Create a figure and axis
+# Plotting different graphs
+# 1. Mass vs Speed
 fig, ax = plt.subplots()
+ax.scatter(df['mass'], df['speed'])
+ax.set_xlabel('Mass')
+ax.set_ylabel('Speed')
+ax.set_title('Mass vs Speed')
+save_and_show_plot(fig, 'mass_vs_speed')
 
-# Create a canvas to display the plot
-canvas = FigureCanvasTkAgg(fig, master=root)
-canvas.get_tk_widget().pack(fill=tk.BOTH, expand=True)
+# 2. Height vs Wire Length
+fig, ax = plt.subplots()
+ax.scatter(df['height'], df['wire_length'])
+ax.set_xlabel('Height')
+ax.set_ylabel('Wire Length')
+ax.set_title('Height vs Wire Length')
+save_and_show_plot(fig, 'height_vs_wire_length')
 
-# Bind key press events to the main window
-root.bind('<Right>', on_key)
-root.bind('<Left>', on_key)
+# 3. Motor Power Distribution
+fig, ax = plt.subplots()
+ax.hist(df['motor_power'], bins=10)
+ax.set_xlabel('Motor Power')
+ax.set_ylabel('Frequency')
+ax.set_title('Motor Power Distribution')
+save_and_show_plot(fig, 'motor_power_distribution')
 
-# Initialize the first plot
-update_plot()
+# 4. Maintenance Cost vs Training Cost
+fig, ax = plt.subplots()
+ax.scatter(df['maintenance_cost'], df['training_cost'])
+ax.set_xlabel('Maintenance Cost')
+ax.set_ylabel('Training Cost')
+ax.set_title('Maintenance Cost vs Training Cost')
+save_and_show_plot(fig, 'maintenance_vs_training_cost')
 
-# Run the main loop
-root.mainloop()
+# 5. Iron Temperature vs Motor Temperature
+fig, ax = plt.subplots()
+ax.scatter(df['iron_temp'], df['motor_temp'])
+ax.set_xlabel('Iron Temperature')
+ax.set_ylabel('Motor Temperature')
+ax.set_title('Iron Temperature vs Motor Temperature')
+save_and_show_plot(fig, 'iron_vs_motor_temp')
+
+print("All graphs generated, saved, and displayed successfully.")
