@@ -1,45 +1,42 @@
+html_content = f"""
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Experiment Analysis</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-        }
-        h1 {
-            text-align: center;
-        }
-        .container {
-            text-align: center;
-        }
-        img {
-            max-width: 100%;
-            height: auto;
-        }
-        button {
-            margin-top: 20px;
-            padding: 10px 20px;
-            font-size: 16px;
-        }
-    </style>
+    <title>Experiment Graphs</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>Experiment Analysis</h1>
-    <div class="container">
-        <img src="docs/experiment_data.png" alt="Experiment Data">
-        <br>
-        <button onclick="runGraphScript()">Run Graph Script</button>
+    <div class="slider">
+        <div class="slides">
+            {"".join([f'<img src="{path}" alt="Graph">' for path in image_paths])}
+        </div>
+        <div class="navigation">
+            <button id="prev">&#10094;</button>
+            <button id="next">&#10095;</button>
+        </div>
     </div>
     <script>
-        function runGraphScript() {
-            fetch('/run_graph_script')
-                .then(response => response.text())
-                .then(data => alert(data))
-                .catch(error => console.error('Error:', error));
-        }
+        let index = 0;
+        const slides = document.querySelectorAll('.slides img');
+        const totalSlides = slides.length;
+
+        document.getElementById('next').addEventListener('click', () => {
+            slides[index].style.display = 'none';
+            index = (index + 1) % totalSlides;
+            slides[index].style.display = 'block';
+        });
+
+        document.getElementById('prev').addEventListener('click', () => {
+            slides[index].style.display = 'none';
+            index = (index - 1 + totalSlides) % totalSlides;
+            slides[index].style.display = 'block';
+        });
+
+        slides.forEach((slide, i) => {
+            if (i !== index) slide.style.display = 'none';
+        });
     </script>
 </body>
 </html>

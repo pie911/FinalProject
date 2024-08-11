@@ -30,6 +30,10 @@ def save_and_show_plot(fig, plot_name):
     plt.show()
     plt.close(fig)
     print(f"{plot_name} saved and displayed successfully.")
+    return image_file_path
+
+# List to store image paths
+image_paths = []
 
 # Plotting different graphs
 # 1. Mass vs Speed
@@ -38,7 +42,7 @@ ax.scatter(df['mass'], df['speed'])
 ax.set_xlabel('Mass')
 ax.set_ylabel('Speed')
 ax.set_title('Mass vs Speed')
-save_and_show_plot(fig, 'mass_vs_speed')
+image_paths.append(save_and_show_plot(fig, 'mass_vs_speed'))
 
 # 2. Height vs Wire Length
 fig, ax = plt.subplots()
@@ -46,7 +50,7 @@ ax.scatter(df['height'], df['wire_length'])
 ax.set_xlabel('Height')
 ax.set_ylabel('Wire Length')
 ax.set_title('Height vs Wire Length')
-save_and_show_plot(fig, 'height_vs_wire_length')
+image_paths.append(save_and_show_plot(fig, 'height_vs_wire_length'))
 
 # 3. Motor Power Distribution
 fig, ax = plt.subplots()
@@ -54,7 +58,7 @@ ax.hist(df['motor_power'], bins=10)
 ax.set_xlabel('Motor Power')
 ax.set_ylabel('Frequency')
 ax.set_title('Motor Power Distribution')
-save_and_show_plot(fig, 'motor_power_distribution')
+image_paths.append(save_and_show_plot(fig, 'motor_power_distribution'))
 
 # 4. Maintenance Cost vs Training Cost
 fig, ax = plt.subplots()
@@ -62,7 +66,7 @@ ax.scatter(df['maintenance_cost'], df['training_cost'])
 ax.set_xlabel('Maintenance Cost')
 ax.set_ylabel('Training Cost')
 ax.set_title('Maintenance Cost vs Training Cost')
-save_and_show_plot(fig, 'maintenance_vs_training_cost')
+image_paths.append(save_and_show_plot(fig, 'maintenance_vs_training_cost'))
 
 # 5. Iron Temperature vs Motor Temperature
 fig, ax = plt.subplots()
@@ -70,6 +74,7 @@ ax.scatter(df['iron_temp'], df['motor_temp'])
 ax.set_xlabel('Iron Temperature')
 ax.set_ylabel('Motor Temperature')
 ax.set_title('Iron Temperature vs Motor Temperature')
-save_and_show_plot(fig, 'iron_vs_motor_temp')
+image_paths.append(save_and_show_plot(fig, 'iron_vs_motor_temp'))
 
 print("All graphs generated, saved, and displayed successfully.")
+
